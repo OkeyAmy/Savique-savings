@@ -82,6 +82,9 @@ export default function LandingPage() {
                                     Start Saving <ArrowRight className="w-4 h-4" />
                                 </Button>
                             </Link>
+                            <a href="https://orynth.dev/projects/savique" target="_blank" rel="noopener">
+                                <img src="https://orynth.dev/api/badge/savique?theme=light&style=default" alt="Featured on Orynth" width="260" height="60" />
+                            </a>
                         </div>
                     </motion.div>
                 </div>
