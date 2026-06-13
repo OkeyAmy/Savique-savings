@@ -22,6 +22,7 @@
     "firebase": "^12.7.0",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",
+    "nanoid": "^3.3.12",
     "next": "16.1.1",
     "nodemailer": "^8.0.0",
     "qrcode.react": "^4.2.0",
@@ -31,7 +32,8 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "viem": "^2.40.3",
-    "wagmi": "^2.19.5"
+    "wagmi": "^2.19.5",
+    "zkarb-sdk": "^1.0.5"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
