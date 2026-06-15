@@ -179,8 +179,6 @@ export default function CreatePersonalVault() {
                                 });
                                 if (decoded.eventName === 'VaultCreated') {
                                     newVault = (decoded.args as any).vault;
-                                    const vaultId = Number((decoded.args as any).vaultId);
-                                    (receipt as any).vaultId = vaultId;
                                     break;
                                 }
                             } catch (e) { }
@@ -201,7 +199,7 @@ export default function CreatePersonalVault() {
                             toast.success("Savings Created!", toastStyle);
                             setTxHash(undefined);
                             setCurrentStep('finalizing');
-                            handleFinalize(receipt.transactionHash, newVault, (receipt as any).vaultId);
+                            handleFinalize(receipt.transactionHash, newVault);
                         } else {
                             throw new Error("Could not find new savings address");
                         }
@@ -347,9 +345,8 @@ export default function CreatePersonalVault() {
         }
     };
 
-    const handleFinalize = async (txHashStr: string, vaultAddrOverride?: string, vaultIdOverride?: number) => {
+    const handleFinalize = async (txHashStr: string, vaultAddrOverride?: string) => {
         const targetVault = (vaultAddrOverride || createdVaultAddress) as `0x${string}`;
-        const vaultId = vaultIdOverride;
 
         try {
             await saveVault({
@@ -359,8 +356,7 @@ export default function CreatePersonalVault() {
                 createdAt: Date.now(),
                 purpose: formData.purpose,
                 targetAmount: formData.targetAmount || formData.amount,
-                beneficiary: formData.beneficiary || "",
-                vaultId: vaultId
+                beneficiary: formData.beneficiary || ""
             });
 
             await saveReceipt({
@@ -372,8 +368,7 @@ export default function CreatePersonalVault() {
                 purpose: formData.purpose,
                 amount: formData.amount,
                 verified: false,
-                type: 'created',
-                vaultId: vaultId
+                type: 'created'
             });
 
             await createNotification(

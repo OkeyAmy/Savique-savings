@@ -7,13 +7,9 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./interfaces/IAavePool.sol";
 
-interface IVaultFactoryNFT {
-    function ownerOf(uint256 tokenId) external view returns (address);
-}
-
 /**
- * @title PersonalVaultV3_Standalone
- * @dev Savings Vault controlled by an NFT. No inheritance to minimize clone size.
+ * @title PersonalVault
+ * @dev Savings Vault controlled by an owner. No inheritance to minimize clone size.
  */
 contract PersonalVault is Initializable, ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -27,6 +23,7 @@ contract PersonalVault is Initializable, ReentrancyGuard {
     address public treasury; 
     address public beneficiary; 
     address public factory; 
+    address public owner;
     uint256 public vaultId;
     string public purpose;
 
@@ -52,7 +49,8 @@ contract PersonalVault is Initializable, ReentrancyGuard {
         uint256 _penaltyBps,
         address _treasury,
         address _beneficiary,
-        uint256 _vaultId
+        uint256 _vaultId,
+        address _owner
     ) public initializer {
         token = IERC20(_token);
         aavePool = IAavePool(_aavePool);
@@ -68,16 +66,13 @@ contract PersonalVault is Initializable, ReentrancyGuard {
         beneficiary = _beneficiary;
         factory = msg.sender;
         vaultId = _vaultId;
+        owner = _owner;
 
         token.forceApprove(_aavePool, type(uint256).max);
     }
 
-    function owner() public view returns (address) {
-        return IVaultFactoryNFT(factory).ownerOf(vaultId);
-    }
-
     modifier onlyOwner() {
-        require(msg.sender == owner(), "Not the NFT owner");
+        require(msg.sender == owner, "Not the vault owner");
         _;
     }
 
@@ -97,7 +92,7 @@ contract PersonalVault is Initializable, ReentrancyGuard {
         require(msg.sender == factory, "Only Factory");
         _supplyToAave(amount);
         totalPrincipal += amount;
-        emit Deposited(owner(), amount, block.timestamp);
+        emit Deposited(owner, amount, block.timestamp);
     }
 
     function withdraw() external onlyOwner nonReentrant {

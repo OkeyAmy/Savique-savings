@@ -173,22 +173,7 @@ export default function HistoryPage() {
                                                 Explorer
                                             </Button>
 
-                                            {receipt.vaultId && (
-                                                <a
-                                                    href={`https://testnets.opensea.io/assets/arbitrum-sepolia/${CONTRACTS.arbitrumSepolia.VaultFactory}/${receipt.vaultId}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        className="gap-2 border-blue-500/20 text-blue-400 hover:bg-blue-500/5 hover:text-blue-300"
-                                                    >
-                                                        <Zap className="w-3 h-3" />
-                                                        Marketplace
-                                                    </Button>
-                                                </a>
-                                            )}
+
                                         </div>
                                     </div>
                                 </div>

@@ -174,9 +174,6 @@ function VaultCard({ address, activeTab }: { address: `0x${string}`, activeTab: 
                         <div className="flex justify-between items-center">
                             <div className="space-y-1">
                                 <h3 className="text-xl font-bold text-white truncate max-w-[200px]">{purpose || "Loading..."}</h3>
-                                {vaultData?.vaultId && (
-                                    <div className="text-[10px] font-mono text-primary/60">NFT: VAULT #{vaultData.vaultId}</div>
-                                )}
                             </div>
                             <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${isLocked 
                                 ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' 

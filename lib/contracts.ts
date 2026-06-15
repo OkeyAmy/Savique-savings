@@ -1,7 +1,7 @@
 // -------------------- Config --------------------
 export const CONTRACTS = {
     arbitrumSepolia: {
-        VaultFactory: "0x85856bFecBe6d46863e2B11A22c1aD58B74A2Ab1" as `0x${string}`,
+        VaultFactory: "0x059652D26C7653278896D3DF7286EAaDE7a60b15" as `0x${string}`,
         USDCToken: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d" as `0x${string}`,
         AavePool: "0xBfC91D59fdAA134A4ED45f7B584cAf96D7792Eff" as `0x${string}`,
     },

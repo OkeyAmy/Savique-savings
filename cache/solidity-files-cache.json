@@ -2,17 +2,18 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\contracts\\interfaces\\IAavePool.sol": {
-      "lastModificationDate": 1775987413048,
+      "lastModificationDate": 1777635835733,
       "contentHash": "2ac4242db0a7dd96e218e9ee7b35b4ab",
       "sourceName": "contracts/interfaces/IAavePool.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -38,17 +39,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\contracts\\PersonalVault.sol": {
-      "lastModificationDate": 1776016248387,
-      "contentHash": "86237ad123360dafcc0c3179a4ceafa6",
+      "lastModificationDate": 1781552674422,
+      "contentHash": "38a786c8af11ca6f3a970c4a803c0d2b",
       "sourceName": "contracts/PersonalVault.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -76,22 +78,22 @@
         "^0.8.20"
       ],
       "artifacts": [
-        "IVaultFactoryNFT",
         "PersonalVault"
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol": {
-      "lastModificationDate": 1775913629944,
+      "lastModificationDate": 1777635844968,
       "contentHash": "190613e556d509d9e9a0ea43dc5d891d",
       "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -117,17 +119,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol": {
-      "lastModificationDate": 1775913625138,
+      "lastModificationDate": 1777635844929,
       "contentHash": "2acae54ad209714bca07edf4bae32f72",
       "sourceName": "@openzeppelin/contracts/proxy/utils/Initializable.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -153,17 +156,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1775913625048,
+      "lastModificationDate": 1777635844941,
       "contentHash": "9261adf6457863de3e9892f51317ec89",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -189,17 +193,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
-      "lastModificationDate": 1775913629952,
+      "lastModificationDate": 1777635844941,
       "contentHash": "1fb9edee1d763745a62d0b1954998792",
       "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -228,17 +233,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC1363.sol": {
-      "lastModificationDate": 1775913624128,
+      "lastModificationDate": 1777635844912,
       "contentHash": "a7fd0f05e36b0d0a21c75340c9c639ec",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC1363.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -267,17 +273,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC165.sol": {
-      "lastModificationDate": 1775913624135,
+      "lastModificationDate": 1777635844913,
       "contentHash": "947853028399b7de34bcc3704ee06e99",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC165.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -303,17 +310,18 @@
       "artifacts": []
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC20.sol": {
-      "lastModificationDate": 1775913624147,
+      "lastModificationDate": 1777635844915,
       "contentHash": "68620db2da7583d9a4919096ac77f577",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC20.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -339,17 +347,18 @@
       "artifacts": []
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
-      "lastModificationDate": 1775913624136,
+      "lastModificationDate": 1777635844966,
       "contentHash": "7074c93b1ea0a122063f26ddd1db1032",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -375,17 +384,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\contracts\\VaultFactory.sol": {
-      "lastModificationDate": 1776177941788,
-      "contentHash": "a4820f407c378fcd9cd01528c5e48530",
+      "lastModificationDate": 1781552676454,
+      "contentHash": "97e14186187bca50cc9074ac8d37275a",
       "sourceName": "contracts/VaultFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -403,14 +413,10 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/token/common/ERC2981.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
         "@openzeppelin/contracts/proxy/Clones.sol",
-        "@openzeppelin/contracts/utils/Base64.sol",
-        "@openzeppelin/contracts/utils/Strings.sol",
         "./PersonalVault.sol"
       ],
       "versionPragmas": [
@@ -421,17 +427,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1775913628205,
+      "lastModificationDate": 1777635844769,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -459,17 +466,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\proxy\\Clones.sol": {
-      "lastModificationDate": 1775913615280,
+      "lastModificationDate": 1777635844926,
       "contentHash": "1dd02316d75b8147282bef56d72f21f0",
       "sourceName": "@openzeppelin/contracts/proxy/Clones.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -581,17 +589,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1775913615281,
+      "lastModificationDate": 1777635844955,
       "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -617,17 +626,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\utils\\Create2.sol": {
-      "lastModificationDate": 1775913615283,
+      "lastModificationDate": 1777635844956,
       "contentHash": "841323ddbb94316c3f9ae8a19ce080ff",
       "sourceName": "@openzeppelin/contracts/utils/Create2.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -655,17 +665,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\utils\\Errors.sol": {
-      "lastModificationDate": 1775913622030,
+      "lastModificationDate": 1777635844965,
       "contentHash": "6b5eac2b85500c3012977849cfd633d8",
       "sourceName": "@openzeppelin/contracts/utils/Errors.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -767,17 +778,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
-      "lastModificationDate": 1775913616471,
+      "lastModificationDate": 1777635844908,
       "contentHash": "5041977bbe908de2e6ed0270447f79ad",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -1145,17 +1157,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1775913620697,
+      "lastModificationDate": 1777635844936,
       "contentHash": "59dfce11284f2636db261df9b6a18f81",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -1186,17 +1199,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1775913625055,
+      "lastModificationDate": 1777635844941,
       "contentHash": "513778b30d2750f5d2b9b19bbcf748a5",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -1224,17 +1238,18 @@
       ]
     },
     "C:\\Users\\pc\\Documents\\MY-PROJECTS\\savique-arbi\\contracts\\TestToken.sol": {
-      "lastModificationDate": 1775914383689,
+      "lastModificationDate": 1777635835734,
       "contentHash": "b5a7359f805dd9224e78a080c67dbb3f",
       "sourceName": "contracts/TestToken.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
-          "evmVersion": "paris",
+          "viaIR": true,
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [

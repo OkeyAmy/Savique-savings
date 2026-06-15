@@ -14,16 +14,14 @@ async function main() {
   const implAddress = await impl.getAddress();
   console.log("Implementation deployed to:", implAddress);
 
-  console.log("2. Deploying VaultFactory (NFT + Clone version)...");
+  console.log("2. Deploying VaultFactory (Clone version)...");
   const Factory = await ethers.getContractFactory("VaultFactory");
   const factory = await Factory.deploy(USDC_ADDRESS, AAVE_POOL, TREASURY, implAddress);
   await factory.waitForDeployment();
 
   const address = await factory.getAddress();
   console.log("VaultFactory V3 deployed to:", address);
-  
-  fs.writeFileSync("last_deployed_factory.txt", address);
-  fs.writeFileSync("last_deployed_impl.txt", implAddress);
+
 }
 
 main().catch((error) => {

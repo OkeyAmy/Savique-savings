@@ -49,10 +49,7 @@ Every dollar saved is now productive capital earning Aave V3 yield.
 *   **Protocol Yield Split**: 80% to User / 20% to Savique Treasury.
 *   **On-Chain Realism**: Subtraction-based math (Total Balance - Principal) instead of simulated APY assumptions.
 
-### 7. Tradeable Savings NFTs
-Each savings vault is represented as a unique, tradeable NFT. If a user needs liquidity before maturity, they can sell their "Savings NFT" on the open market instead of breaking the vault early.
-*   **Protocol Royalty**: 2.5% on every secondary market trade.
-*   **Dynamic Visuals**: NFT metadata visibly displays your "Goal" (e.g. Car, House) and the current value.
+
 
 ---
 

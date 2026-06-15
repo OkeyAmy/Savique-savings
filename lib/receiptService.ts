@@ -21,7 +21,6 @@ export interface Receipt {
     verified: boolean;
     type: 'created' | 'breaked' | 'completed';
     penalty?: string;
-    vaultId?: number;
 }
 
 const RECEIPTS_COLLECTION = 'receipts';
@@ -39,7 +38,8 @@ const KNOWN_FACTORIES = [
     "0xD799d10fAECfa3D9FdBe5b7c940bb176d931A5f0", // V4 (On-Chain NFT)
     "0xC78178AbdFC385E6dD1E4e8304545741e44B92d3", // V5 (Fixed JSON)
     "0x0484780F5aA1EbD7bD7e6C4c72ADFDA2c0c9D57A", // V6 (OpenZeppelin Standard)
-    "0x85856bFecBe6d46863e2B11A22c1aD58B74A2Ab1"  // V7 (Tiered Rewards)
+    "0x85856bFecBe6d46863e2B11A22c1aD58B74A2Ab1", // V7 (Tiered Rewards)
+    "0x059652D26C7653278896D3DF7286EAaDE7a60b15"  // V8 (Non-NFT)
 ].map(a => a.toLowerCase());
 
 function isSameNetwork(fact1: string, fact2: string) {
@@ -207,7 +207,6 @@ export interface SavedVault {
     purpose?: string;
     targetAmount?: string; // New: Sinking Fund Goal
     beneficiary?: string; // Emergency Beneficiary
-    vaultId?: number; // Support for NFT Vault IDs
 }
 
 import { ensureUserExists } from './userService';

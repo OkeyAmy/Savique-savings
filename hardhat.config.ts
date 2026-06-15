@@ -7,7 +7,16 @@ dotenv.config({ path: ".env.local" });
 dotenv.config(); // Fallback to .env if both exist
 
 const config: HardhatUserConfig = {
-    solidity: "0.8.20",
+    solidity: {
+        version: "0.8.20",
+        settings: {
+            viaIR: true,
+            optimizer: {
+                enabled: true,
+                runs: 200,
+            },
+        },
+    },
     networks: {
         arbitrumSepolia: {
             url: "https://sepolia-rollup.arbitrum.io/rpc",

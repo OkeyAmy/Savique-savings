@@ -601,20 +601,7 @@ export default function VaultDetailPage() {
                                     </div>
                                     <p className="text-sm text-zinc-500">Until {unlockDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                     
-                                    {vaultData?.vaultId && (
-                                        <div className="pt-4">
-                                            <a 
-                                                href={`https://testnets.opensea.io/assets/arbitrum-sepolia/${CONTRACTS.arbitrumSepolia.VaultFactory}/${vaultData.vaultId}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                <Button variant="outline" size="sm" className="bg-white/5 border-white/10 hover:bg-white/10 text-[10px] h-8 px-4 rounded-full">
-                                                    <Zap className="w-3 h-3 mr-2 text-blue-400" />
-                                                    View on OpenSea (Testnet)
-                                                </Button>
-                                            </a>
-                                        </div>
-                                    )}
+
                                 </div>
 
                                 {/* Progress Bar */}
