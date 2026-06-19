@@ -57,3 +57,11 @@
     height: 0 !important;
   }
 }
+
+.chainrails-modal-wrapper iframe {
+  width: 40% !important;
+  height: 100% !important;
+  background-color: blue !important;
+  z-index: 100001 !important;
+  margin: auto !important;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { ChainrailsModal } from "./ChainrailsModal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Rocket, AlertTriangle, ShieldCheck, Coins, Lock, Calendar, TrendingUp, Info, Plus, Wallet, Receipt, Loader2, Check, ChevronDown, Mail } from "lucide-react";
@@ -75,6 +76,8 @@ export default function CreatePersonalVault() {
     const router = useRouter();
     const { address, isConnected, isConnecting, isReconnecting } = useAccount();
     const publicClient = usePublicClient();
+    const [selectedTab, setSelectedTab] = useState<'usdc' | 'fiat'>('usdc');
+    const [showModal, setShowModal] = useState(false);
 
     // USDC Balance
     const { data: balance } = useReadContract({
@@ -130,7 +133,8 @@ export default function CreatePersonalVault() {
     // Multi-step state
     type Step = 'idle' | 'approving' | 'creating' | 'finalizing' | 'done';
     const [currentStep, setCurrentStep] = useState<Step>('idle');
-    const [createdVaultAddress, setCreatedVaultAddress] = useState<`0x${string}` | null>(null);
+    const [createdVaultAddress, setCreatedVaultAddress] = useState<`0x${string}`>();
+    const [isFiatLoading, setIsFiatLoading] = useState(false);
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
 
     // Brand Styled Toast
@@ -319,29 +323,38 @@ export default function CreatePersonalVault() {
 
     const handleCreate = async () => {
         if (!address) return;
-        try {
-            const amountUnits = parseUnits(formData.amount, decimals || 18);
-            if (!allowance || allowance < amountUnits) {
-                setCurrentStep('approving');
-                toastId.current = toast.loading("Approving USDC...", toastStyle);
-                writeContract({
-                    address: CONTRACTS.arbitrumSepolia.USDCToken,
-                    abi: ERC20_ABI,
-                    functionName: "approve",
-                    args: [CONTRACTS.arbitrumSepolia.VaultFactory, MAX_UINT256],
-                    // Add gas buffer
-                    gasPrice: BigInt(100000000)
-                }, {
-                    onSuccess: (hash) => setTxHash(hash)
-                });
-            } else {
-                setCurrentStep('creating');
-                toastId.current = toast.loading("Creating & Funding Savings...", toastStyle);
-                triggerCreateVault();
+        if (!formData.amount || parseFloat(formData.amount) <= 0) {
+            alert("Please enter a valid deposit amount");
+            return;
+        }
+        if (selectedTab === 'usdc') {
+            // Existing USDC flow
+            try {
+                const amountUnits = parseUnits(formData.amount, decimals || 18);
+                if (!allowance || allowance < amountUnits) {
+                    setCurrentStep('approving');
+                    toastId.current = toast.loading("Approving USDC...", toastStyle);
+                    writeContract({
+                        address: CONTRACTS.arbitrumSepolia.USDCToken,
+                        abi: ERC20_ABI,
+                        functionName: "approve",
+                        args: [CONTRACTS.arbitrumSepolia.VaultFactory, MAX_UINT256],
+                        gasPrice: BigInt(100000000)
+                    }, {
+                        onSuccess: (hash) => setTxHash(hash)
+                    });
+                } else {
+                    setCurrentStep('creating');
+                    toastId.current = toast.loading("Creating & Funding Savings...", toastStyle);
+                    triggerCreateVault();
+                }
+            } catch (e) {
+                console.error(e);
+                setCurrentStep('idle');
             }
-        } catch (e) {
-            console.error(e);
-            setCurrentStep('idle');
+        } else {
+            // Fiat flow – open Chainrails modal
+            setShowModal(true);
         }
     };
 
@@ -520,7 +533,16 @@ export default function CreatePersonalVault() {
                             </div>
 
 
-
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                                    <Wallet className="w-4 h-4 text-primary" />
+                                    Funding Method
+                                </label>
+                                <div className="flex bg-white/5 px-1 py-1 rounded-xl w-[60%]">
+                                    <button type="button" onClick={() => setSelectedTab('usdc')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${selectedTab === 'usdc' ? 'bg-primary text-white' : 'text-gray-400'}`}>USDC</button>
+                                    <button type="button" onClick={() => setSelectedTab('fiat')} className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all ${selectedTab === 'fiat' ? 'bg-primary text-white' : 'text-gray-400'}`}>Fiat / Credit Card</button>
+                                </div>
+                            </div>
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-semibold text-white flex items-center gap-2">
@@ -532,14 +554,18 @@ export default function CreatePersonalVault() {
                                             type="number"
                                             required step="0.01" min="0.1"
                                             disabled={isProcessing}
+                                            placeholder={selectedTab === 'fiat' ? "Enter amount of USDC you want to buy" : "0.00"}
                                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 pr-20 text-white focus:border-primary/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                             value={formData.amount}
                                             onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                                         />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">USDC</span>
                                     </div>
-                                    {balance !== undefined && (
+                                    {balance !== undefined && selectedTab === 'usdc' && (
                                         <p className="text-xs text-gray-500 mt-1">Available: {formatUnits(balance, decimals || 18)} USDC</p>
+                                    )}
+                                    {selectedTab === 'fiat' && (
+                                        <p className="text-xs text-primary/80 mt-1 italic">Enter the exact amount of USDC you wish to buy</p>
                                     )}
                                 </div>
 
@@ -647,7 +673,7 @@ export default function CreatePersonalVault() {
                                         <span className={`text-sm ${currentStep === 'approving' ? 'text-primary font-bold' : 'text-gray-400'}`}>1. Approve USDC</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        {currentStep === 'creating' ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : ((currentStep === 'finalizing') ? <Check className="w-4 h-4 text-green-500" /> : <div className="w-4 h-4 rounded-full border border-gray-500" />)}
+                                        {currentStep === 'creating' ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : ((currentStep === 'finalizing') ? <Check className="w-4 h-4 text-green-500" /> : <div className="w-4 h-4 rounded-full border border-gray-5" />)}
                                         <span className={`text-sm ${currentStep === 'creating' ? 'text-primary font-bold' : 'text-gray-400'}`}>2. Create & Deposit</span>
                                     </div>
                                 </div>
@@ -655,13 +681,28 @@ export default function CreatePersonalVault() {
 
                             <Button
                                 type="submit" size="lg"
+                                disabled={isProcessing || isFiatLoading}
                                 className="w-full bg-primary hover:bg-primary/90 text-white font-semibold"
-                                disabled={isProcessing}
                             >
-                                {isProcessing && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                                {(isProcessing || isFiatLoading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                                 {getButtonText()}
                             </Button>
                         </form>
+                        {/* Chainrails fiat modal */}
+                        <div >
+                            <ChainrailsModal
+                                open={showModal}
+                                onClose={() => setShowModal(false)}
+                                address={address as string}
+                                amount={formData.amount}
+                                onLoadingChange={(loading) => setIsFiatLoading(loading)}
+                                onSuccess={() => {
+                                    // after successful fiat payment, continue vault creation
+                                    triggerCreateVault();
+
+                                }}
+                            />
+                        </div>
                     </Card>
                 </div>
 

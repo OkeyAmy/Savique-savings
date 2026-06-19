@@ -14,6 +14,7 @@ import Link from "next/link";
 import { calculateAccruedInterest } from "@/lib/interestService";
 import { VaultBreakModal } from "@/components/VaultBreakModal";
 import { saveReceipt, getVaultByAddress, SavedVault, updateReceipt, saveVault, getReceiptsByVault, Receipt } from "@/lib/receiptService";
+import { ChainrailsModal } from "@/app/dashboard/create/ChainrailsModal";
 import { createNotification } from "@/lib/notificationService";
 import { getUserProfile } from "@/lib/userService";
 import { Progress } from "../../../../components/ui/progress";
@@ -88,6 +89,9 @@ export default function VaultDetailPage() {
     const [totalPrincipal, setTotalPrincipal] = useState(0);
 
     const [isApprovingVault, setIsApprovingVault] = useState(false);
+    const [selectedTopUpTab, setSelectedTopUpTab] = useState<'usdc' | 'fiat'>('usdc');
+    const [isFiatLoading, setIsFiatLoading] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchVault = async () => {
@@ -104,11 +108,11 @@ export default function VaultDetailPage() {
                 let principal = receipts
                     .filter(r => r.type === 'created')
                     .reduce((sum, r) => sum + parseFloat(r.amount), 0);
-                
+
                 if (principal === 0 && data?.targetAmount) {
                     principal = parseFloat(data.targetAmount);
                 }
-                
+
                 setTotalPrincipal(principal);
 
 
@@ -167,16 +171,16 @@ export default function VaultDetailPage() {
 
     const accruedInterest = useMemo(() => {
         if (!balanceResult || !decimals) return "0.000000";
-        
+
         // currentBalance includes principal + interest
         const currentBalance = parseFloat(formatUnits(balanceResult as bigint, decimals as number || 18));
-        
+
         // Interest is the difference
         const rawInterest = Math.max(0, currentBalance - totalPrincipal);
-        
+
         // Professional "Net Display": Only show the 80% that belongs to the user
         const userInterest = rawInterest * 0.8;
-        
+
         return userInterest.toFixed(6);
     }, [balanceResult, decimals, totalPrincipal]);
 
@@ -455,6 +459,11 @@ export default function VaultDetailPage() {
     const handleTopUp = async (bypassAllowance = false) => {
         if (!userAddress || !topUpAmount) return;
 
+        if (selectedTopUpTab === 'fiat' && !bypassAllowance) {
+            setShowModal(true);
+            return;
+        }
+
         const amountUnits = parseUnits(topUpAmount, decimals as number || 18);
         const currentTotal = parseFloat(balance);
         const adding = parseFloat(topUpAmount);
@@ -582,7 +591,7 @@ export default function VaultDetailPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Main Status Card */}
-                <Card className="md:col-span-2 p-8 bg-gradient-to-br from-zinc-900 to-zinc-950 border-zinc-800 relative overflow-hidden">
+                <Card className="md:col-span-2 p-8 bg-gradient-to-br from-zinc-900 to-zinc-950 border-zinc-800 relative overflow-hidden max-h-[500px]">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
                     <div className="relative z-10 flex flex-col items-center justify-center text-center h-full py-8 space-y-6">
@@ -600,7 +609,7 @@ export default function VaultDetailPage() {
                                         {<span className="text-zinc-500">{countdown.seconds.toString().padStart(2, '0')}<span className="text-lg text-zinc-600 ml-1">s</span></span>}
                                     </div>
                                     <p className="text-sm text-zinc-500">Until {unlockDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                                    
+
 
                                 </div>
 
@@ -679,7 +688,7 @@ export default function VaultDetailPage() {
                         <Card className="p-6 bg-zinc-900/50 border-white/5 relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -z-10 group-hover:bg-primary/10 transition-colors" />
                             <div className="flex items-center gap-3 mb-4">
-                                
+
                                 <p className="text-xs text-zinc-500 font-bold uppercase tracking-tight">Accrued Interest</p>
                             </div>
                             <div className="flex items-baseline gap-2">
@@ -727,29 +736,44 @@ export default function VaultDetailPage() {
                                                 className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10"
                                             >
                                                 <div className="space-y-2">
+                                                    <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold flex items-center gap-2">
+                                                        <Wallet className="w-3 h-3 text-primary" />
+                                                        Funding Method
+                                                    </label>
+                                                    <div className="flex bg-black/40 px-1 py-1 rounded-xl">
+                                                        <button type="button" onClick={() => setSelectedTopUpTab('usdc')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedTopUpTab === 'usdc' ? 'bg-primary text-white' : 'text-gray-500'}`}>USDC</button>
+                                                        <button type="button" onClick={() => setSelectedTopUpTab('fiat')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedTopUpTab === 'fiat' ? 'bg-primary text-white' : 'text-gray-500'}`}>Fiat / Credit Card</button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2">
                                                     <div className="flex justify-between text-xs">
                                                         <span className="text-zinc-500">Amount to Add</span>
-                                                        {userBalance !== undefined && (
+                                                        {userBalance !== undefined && selectedTopUpTab === 'usdc' && (
                                                             <span className="text-zinc-400">Bal: {formatUnits(userBalance as bigint, decimals as number || 18)} USDC</span>
                                                         )}
                                                     </div>
                                                     <div className="relative">
                                                         <input
                                                             type="number"
-                                                            placeholder="0.00"
+                                                            placeholder={selectedTopUpTab === 'fiat' ? "Enter exact USDC amount to buy" : "0.00"}
+                                                            disabled={topUpStep !== 'idle' || isConfirming || isFiatLoading}
                                                             className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary/50 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                             value={topUpAmount}
                                                             onChange={(e) => setTopUpAmount(e.target.value)}
                                                         />
                                                     </div>
+                                                    {vaultData?.targetAmount && parseFloat(vaultData.targetAmount) > 0 && parseFloat(topUpAmount) > (parseFloat(vaultData.targetAmount) - parseFloat(balance)) && (
+                                                        <p className="text-xs text-red-500">Amount exceeds remaining goal</p>
+                                                    )}
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <Button
                                                         className="flex-1 h-9 rounded-lg"
                                                         onClick={() => handleTopUp()}
-                                                        disabled={topUpStep !== 'idle' || isConfirming || !topUpAmount}
+                                                        disabled={topUpStep !== 'idle' || isConfirming || isFiatLoading || !topUpAmount || (vaultData?.targetAmount && parseFloat(vaultData.targetAmount) > 0 && parseFloat(topUpAmount) > (parseFloat(vaultData.targetAmount) - parseFloat(balance))) as boolean}
                                                     >
-                                                        {(topUpStep === 'approving' || topUpStep === 'depositing' || isConfirming) ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowUpCircle className="w-4 h-4 mr-2" />}
+                                                        {(topUpStep === 'approving' || topUpStep === 'depositing' || isConfirming || isFiatLoading) ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowUpCircle className="w-4 h-4 mr-2" />}
                                                         {topUpStep === 'approving' ? 'Approving...' : (topUpStep === 'depositing' || isConfirming) ? 'Processing...' : 'Confirm'}
                                                     </Button>
                                                     <Button
@@ -772,6 +796,20 @@ export default function VaultDetailPage() {
                                         )}
                                     </>
                                 )}
+
+                                <div className="z-50 relative">
+                                    <ChainrailsModal
+                                        open={showModal}
+                                        onClose={() => setShowModal(false)}
+                                        address={userAddress as string}
+                                        amount={topUpAmount}
+                                        onLoadingChange={(loading) => setIsFiatLoading(loading)}
+                                        onSuccess={() => {
+                                            // Proceed with top up assuming USDC has arrived
+                                            handleTopUp(true); // pass true to bypass fiat check
+                                        }}
+                                    />
+                                </div>
 
                                 <Button
                                     variant="ghost"
