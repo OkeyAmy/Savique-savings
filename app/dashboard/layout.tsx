@@ -63,8 +63,14 @@ function useDeadlinePulse(address?: string) {
                         await new Promise(resolve => setTimeout(resolve, 200));
 
                     } catch (e) {
-                        // Just log and continue to next vault
-                        console.warn(`[Pulse] Failed to check vault ${vaultAddr}:`, e);
+                        // If the contract does not implement unlockTimestamp, the call returns no data ("0x").
+                        // Filter that specific case to avoid noisy logs, but still warn on other errors.
+                        const errMsg = (e as Error).message ?? '';
+                        if (errMsg.includes('returned no data')) {
+                            // Silent skip – this vault simply lacks the function.
+                        } else {
+                            console.warn(`[Pulse] Failed to check vault ${vaultAddr}:`, e);
+                        }
                     }
                 }
             } catch (e) {
