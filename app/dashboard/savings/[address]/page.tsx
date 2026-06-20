@@ -8,11 +8,12 @@ import { VAULT_ABI, ERC20_ABI, CONTRACTS, AAVE_POOL_ABI } from "@/lib/contracts"
 import { formatUnits, parseUnits } from "viem";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock, Unlock, ArrowLeft, Clock, Wallet, AlertTriangle, ShieldCheck, Eye, EyeOff, Zap, TrendingUp } from "lucide-react";
+import { Lock, Unlock, ArrowLeft, Clock, Wallet, AlertTriangle, ShieldCheck, Eye, EyeOff, Zap, TrendingUp, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { calculateAccruedInterest } from "@/lib/interestService";
 import { VaultBreakModal } from "@/components/VaultBreakModal";
+import { ShareProofModal } from "@/components/ShareProofModal";
 import { VaultTopUpModal } from "@/components/VaultTopUpModal";
 import { useContractAddresses } from "@/hooks/useContractAddresses";
 import { saveReceipt, getVaultByAddress, SavedVault, updateReceipt, saveVault, getReceiptsByVault, Receipt } from "@/lib/receiptService";
@@ -71,6 +72,7 @@ export default function VaultDetailPage() {
 
     const [quote, setQuote] = useState("");
     const [isBreakModalOpen, setIsBreakModalOpen] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const { address: userAddress, isConnected } = useAccount();
     const { usdtAddress, isLoaded } = useContractAddresses();
 
@@ -688,6 +690,16 @@ export default function VaultDetailPage() {
                         </div>
                     </Card>
 
+                    {/* Share Proof of Savings (zero-knowledge) */}
+                    <Button
+                        variant="outline"
+                        className="w-full border-primary/30 text-primary hover:bg-primary/10"
+                        onClick={() => setIsShareModalOpen(true)}
+                    >
+                        <Share2 className="w-4 h-4 mr-2" />
+                        Share Proof
+                    </Button>
+
                     {/* Interest Card */}
                     {parseFloat(balance) > 0 && (
                         <Card className="p-6 bg-zinc-900/50 border-white/5 relative overflow-hidden group">
@@ -800,6 +812,10 @@ export default function VaultDetailPage() {
                 balance={balance}
             />
 
+            <ShareProofModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                vaultAddress={address}
             <VaultTopUpModal
                 isOpen={isTopUpMode}
                 onClose={() => { setIsTopUpMode(false); setTopUpAmount(""); }}

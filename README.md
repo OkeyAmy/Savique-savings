@@ -74,3 +74,71 @@ Every dollar saved is now productive capital earning Aave V3 yield.
 
 The `VaultFactory` is currently deployed and verified on **Arbitrum Sepolia**:
 `0x25333E809be8E9101491518abd52Ac1133137c30`
+
+---
+
+## 🔐 Zero-Knowledge Proof of Savings (zkArb SDK)
+
+Proving your savings to a third party (e.g. a landlord) normally means exposing your
+wallet address and full transaction history. Savique solves this with a **zero-knowledge
+proof**: a user can cryptographically prove *"I have saved at least $X for at least Y months"*
+**without revealing their wallet address, exact balance, or transaction history**.
+
+This is powered by the [`zkArb SDK`](https://github.com/jatinsahijwani/zkArb-sdk) and a
+pre-compiled Groth16 circuit deployed on **Arbitrum Sepolia**.
+
+### How it works
+
+1.  **User clicks "Share Proof"** on a savings vault (`/dashboard/savings/<address>`) and
+    selects thresholds (default: $1,000, 3 months).
+2.  The server-side API route (`/api/generate-proof`) reads the real savings balance from the
+    `PersonalVault` contract **on-chain**, then calls the SDK's `verifyProof()`.
+3.  `verifyProof()` generates a real ZK proof and **verifies it on-chain against the deployed
+    verifier contract** via a read-only call — no transaction, no gas, no private key. If the
+    savings are below the threshold, the proof is *mathematically impossible* to produce.
+4.  Only the public metadata (thresholds, verifier contract address, timestamp) is saved to
+    Firebase — **never the wallet address**.
+5.  The user gets a **shareable link + QR code** (`/proof/<proofId>`). A landlord opens it to
+    see a green **"Verified"** badge and an **"Audit on Blockchain"** link to the verifier
+    contract on Arbiscan — all without any login.
+
+### Key files
+
+| File | Purpose |
+|------|---------|
+| `zk-integration/savings_verifier.circom` | The ZK circuit (proves `savings ≥ min` and `duration ≥ min`) |
+| `zk-integration/savings_verifier/` | Pre-compiled circuit artifacts + deployed verifier (`deployment.json`) |
+| `lib/zkProof.ts` | Server-side wrapper around the zkArb SDK `verifyProof()` |
+| `lib/proofStore.ts` | Firestore read/write for proof metadata (no wallet address stored) |
+| `app/api/generate-proof/route.ts` | API route: reads vault on-chain, generates + verifies proof |
+| `components/ShareProofModal.tsx` | "Share Proof" modal (thresholds, link, QR code) |
+| `app/proof/[proofId]/page.tsx` | Public landlord verification page |
+
+### Privacy guarantees
+
+*   The Firestore `proofs` document contains **only** thresholds, verifier contract, and
+    timestamps — **no wallet address, no vault address, no balance**.
+*   The exact savings amount and vault creation time are *private inputs* to the circuit and
+    are never revealed — only the boolean "thresholds met" result is provable.
+
+### 🧪 Testing the ZK functionality
+
+A standalone test script runs the full proof flow against the deployed verifier on Arbitrum
+Sepolia — **no Firebase, no wallet, and no gas required**:
+
+```bash
+PATH="$PWD/node_modules/.bin:$PATH" node zk-integration/test-proof.js
+```
+
+> The `PATH="$PWD/node_modules/.bin:$PATH"` prefix ensures the `snarkjs` CLI (which the SDK
+> shells out to) is found. This happens automatically when running the app via `npm run dev`.
+
+It exercises two cases and prints the result:
+
+*   **PASS case** — $2,000 saved, locked 200 days, threshold $1,000 / 90 days →
+    `on-chain verifier result: true`
+*   **FAIL case** — $500 saved, threshold $1,000 → proof generation is **rejected** (the
+    circuit is unsatisfiable, so a valid proof cannot be produced)
+
+To test the full UI flow, add your Firebase credentials to `.env.local`, run `npm run dev`,
+then use the **"Share Proof"** button on any savings vault.
