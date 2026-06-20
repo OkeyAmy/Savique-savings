@@ -816,6 +816,7 @@ export default function VaultDetailPage() {
                 isOpen={isShareModalOpen}
                 onClose={() => setIsShareModalOpen(false)}
                 vaultAddress={address}
+            />
             <VaultTopUpModal
                 isOpen={isTopUpMode}
                 onClose={() => { setIsTopUpMode(false); setTopUpAmount(""); }}
