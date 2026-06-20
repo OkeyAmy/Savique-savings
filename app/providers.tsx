@@ -72,7 +72,7 @@ const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <WagmiProvider config={wagmiConfig}>
+        <WagmiProvider config={wagmiConfig as any}>
             <QueryClientProvider client={queryClient}>
                 <RainbowKitProvider
                     theme={darkTheme({

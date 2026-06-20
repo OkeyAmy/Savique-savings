@@ -13,6 +13,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { calculateAccruedInterest } from "@/lib/interestService";
 import { VaultBreakModal } from "@/components/VaultBreakModal";
+import { VaultTopUpModal } from "@/components/VaultTopUpModal";
+import { useContractAddresses } from "@/hooks/useContractAddresses";
 import { saveReceipt, getVaultByAddress, SavedVault, updateReceipt, saveVault, getReceiptsByVault, Receipt } from "@/lib/receiptService";
 import { ChainrailsModal } from "@/app/dashboard/create/ChainrailsModal";
 import { createNotification } from "@/lib/notificationService";
@@ -70,6 +72,7 @@ export default function VaultDetailPage() {
     const [quote, setQuote] = useState("");
     const [isBreakModalOpen, setIsBreakModalOpen] = useState(false);
     const { address: userAddress, isConnected } = useAccount();
+    const { usdtAddress, isLoaded } = useContractAddresses();
 
 
 
@@ -126,9 +129,10 @@ export default function VaultDetailPage() {
     const { data: balanceResult, refetch: refetchBalance } = useReadContract({ address, abi: VAULT_ABI, functionName: "totalAssets" });
     const { data: unlockTimeResult } = useReadContract({ address, abi: VAULT_ABI, functionName: "unlockTimestamp" });
     const { data: decimals } = useReadContract({
-        address: CONTRACTS.arbitrumSepolia.USDCToken,
+        address: usdtAddress,
         abi: ERC20_ABI,
         functionName: 'decimals',
+        query: { enabled: isLoaded }
     });
 
     const { data: beneficiary } = useReadContract({ address, abi: VAULT_ABI, functionName: "beneficiary" });
@@ -136,20 +140,20 @@ export default function VaultDetailPage() {
 
     // Check Allowance for Top-up
     const { data: allowance, refetch: refetchAllowance } = useReadContract({
-        address: CONTRACTS.arbitrumSepolia.USDCToken,
+        address: usdtAddress,
         abi: ERC20_ABI,
         functionName: 'allowance',
         args: [userAddress as `0x${string}`, address],
-        query: { enabled: !!userAddress && !!address },
+        query: { enabled: !!userAddress && !!address && isLoaded },
     });
 
     // Balance for Top-up
     const { data: userBalance, refetch: refetchUserBalance } = useReadContract({
-        address: CONTRACTS.arbitrumSepolia.USDCToken,
+        address: usdtAddress,
         abi: ERC20_ABI,
         functionName: 'balanceOf',
         args: [userAddress as `0x${string}`],
-        query: { enabled: !!userAddress },
+        query: { enabled: !!userAddress && isLoaded },
     });
 
     // Read Dynamic Interest Rate from Aave
@@ -158,7 +162,8 @@ export default function VaultDetailPage() {
         abi: AAVE_POOL_ABI,
         //@ts-ignore - complex tuple return
         functionName: 'getReserveData',
-        args: [CONTRACTS.arbitrumSepolia.USDCToken],
+        args: [usdtAddress],
+        query: { enabled: isLoaded }
     });
 
     const dynamicApy = useMemo(() => {
@@ -470,7 +475,7 @@ export default function VaultDetailPage() {
         const target = vaultData?.targetAmount ? parseFloat(vaultData.targetAmount) : 0;
 
         // Issue 3: Prevent topping up more than goal
-        if (target > 0 && currentTotal + adding > target) {
+        if (target > 0 && parseFloat((currentTotal + adding).toFixed(2)) > parseFloat(target.toFixed(2))) {
             toast.error(`Deposit exceeds goal! Your target is $${target}. Reach this milestone or create a new savings.`, toastStyle);
             return;
         }
@@ -482,7 +487,7 @@ export default function VaultDetailPage() {
                 if (toastId.current) toast.dismiss(toastId.current);
                 toastId.current = toast.loading("Approving USDC...", toastStyle);
                 writeContract({
-                    address: CONTRACTS.arbitrumSepolia.USDCToken,
+                    address: usdtAddress,
                     abi: ERC20_ABI,
                     functionName: "approve",
                     args: [address, BigInt("115792089237316195423570985008687907853269984665640564039457584007913129639935")],
@@ -728,73 +733,13 @@ export default function VaultDetailPage() {
                         ) : isLocked ? (
                             <>
                                 {vaultData?.targetAmount && parseFloat(vaultData.targetAmount) > 0 && (
-                                    <>
-                                        {isTopUpMode ? (
-                                            <motion.div
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10"
-                                            >
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold flex items-center gap-2">
-                                                        <Wallet className="w-3 h-3 text-primary" />
-                                                        Funding Method
-                                                    </label>
-                                                    <div className="flex bg-black/40 px-1 py-1 rounded-xl">
-                                                        <button type="button" onClick={() => setSelectedTopUpTab('usdc')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedTopUpTab === 'usdc' ? 'bg-primary text-white' : 'text-gray-500'}`}>USDC</button>
-                                                        <button type="button" onClick={() => setSelectedTopUpTab('fiat')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedTopUpTab === 'fiat' ? 'bg-primary text-white' : 'text-gray-500'}`}>Fiat / Credit Card</button>
-                                                    </div>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <div className="flex justify-between text-xs">
-                                                        <span className="text-zinc-500">Amount to Add</span>
-                                                        {userBalance !== undefined && selectedTopUpTab === 'usdc' && (
-                                                            <span className="text-zinc-400">Bal: {formatUnits(userBalance as bigint, decimals as number || 18)} USDC</span>
-                                                        )}
-                                                    </div>
-                                                    <div className="relative">
-                                                        <input
-                                                            type="number"
-                                                            placeholder={selectedTopUpTab === 'fiat' ? "Enter exact USDC amount to buy" : "0.00"}
-                                                            disabled={topUpStep !== 'idle' || isConfirming || isFiatLoading}
-                                                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-primary/50 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                            value={topUpAmount}
-                                                            onChange={(e) => setTopUpAmount(e.target.value)}
-                                                        />
-                                                    </div>
-                                                    {vaultData?.targetAmount && parseFloat(vaultData.targetAmount) > 0 && parseFloat(topUpAmount) > (parseFloat(vaultData.targetAmount) - parseFloat(balance)) && (
-                                                        <p className="text-xs text-red-500">Amount exceeds remaining goal</p>
-                                                    )}
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        className="flex-1 h-9 rounded-lg"
-                                                        onClick={() => handleTopUp()}
-                                                        disabled={topUpStep !== 'idle' || isConfirming || isFiatLoading || !topUpAmount || (vaultData?.targetAmount && parseFloat(vaultData.targetAmount) > 0 && parseFloat(topUpAmount) > (parseFloat(vaultData.targetAmount) - parseFloat(balance))) as boolean}
-                                                    >
-                                                        {(topUpStep === 'approving' || topUpStep === 'depositing' || isConfirming || isFiatLoading) ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowUpCircle className="w-4 h-4 mr-2" />}
-                                                        {topUpStep === 'approving' ? 'Approving...' : (topUpStep === 'depositing' || isConfirming) ? 'Processing...' : 'Confirm'}
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        className="h-9 w-9 p-0 rounded-lg hover:bg-white/10"
-                                                        onClick={() => { setIsTopUpMode(false); setTopUpAmount(""); }}
-                                                    >
-                                                        <ArrowLeft className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </motion.div>
-                                        ) : (
-                                            <Button
-                                                className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20"
-                                                onClick={() => setIsTopUpMode(true)}
-                                            >
-                                                <Plus className="w-5 h-5 mr-2" />
-                                                Top Up Savings
-                                            </Button>
-                                        )}
-                                    </>
+                                    <Button
+                                        className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20"
+                                        onClick={() => setIsTopUpMode(true)}
+                                    >
+                                        <Plus className="w-5 h-5 mr-2" />
+                                        Top Up Savings
+                                    </Button>
                                 )}
 
                                 <div className="z-50 relative">
@@ -853,6 +798,23 @@ export default function VaultDetailPage() {
                 address={address}
                 purpose={purpose || ""}
                 balance={balance}
+            />
+
+            <VaultTopUpModal
+                isOpen={isTopUpMode}
+                onClose={() => { setIsTopUpMode(false); setTopUpAmount(""); }}
+                vaultData={vaultData}
+                balance={balance}
+                userBalance={userBalance}
+                decimals={decimals as number}
+                topUpStep={topUpStep}
+                isConfirming={isConfirming}
+                isFiatLoading={isFiatLoading}
+                topUpAmount={topUpAmount}
+                setTopUpAmount={setTopUpAmount}
+                selectedTopUpTab={selectedTopUpTab}
+                setSelectedTopUpTab={setSelectedTopUpTab}
+                handleTopUp={handleTopUp}
             />
         </div>
     );
