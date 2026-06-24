@@ -22,7 +22,7 @@ Savique provides a **Strategic Commitment Layer** for your capital. By moving be
 
 ---
 
-## ✨ Premium Features (V2)
+##  Premium Features (V2)
 
 ### 1. Sinking Fund Protocol (Goal Tracking)
 Users can now set specific financial targets (e.g., "Property Deposit," "Emergency Fund"). The protocol tracks your progress in real-time, visualizing how close you are to your absolute financial freedom.
