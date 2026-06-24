@@ -4,7 +4,7 @@ Savique is a premium, disciplined, on-chain savings platform designed for high-c
 
 ---
 
-## 🛑 The Problem
+##  The Problem
 
 Modern digital wealth is engineered for high liquidity, which often leads to **financial indiscretion**. Traditional wallets make it too easy to "dip into" funds meant for long-term goals or essential expenses like rent, taxes, or business capital.
 
